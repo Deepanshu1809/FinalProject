@@ -14,6 +14,13 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 
 	Timer t;
 	Random r = new Random();
+	
+	
+	
+	private Controller c;
+	
+	
+	
 	int x1 , y1 , x2 , y2 , x3 , y3 , x4 , y4 , x5 , y5 , x6 , y6 ;
 	int p_x = 500 , p_y =850;
 	int b_x , b_y;
@@ -31,9 +38,15 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		t = new Timer(delay,this);
 		t.start();
 		
+		c = new Controller(this);
+		
 		
 	}
 	
+	public void tick() {
+		c.tick();
+		
+	}
 	public void Random() {
 		
 		x1 = r.nextInt(900);
@@ -74,6 +87,8 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		
 		g.fillRect(b_x, b_y, 20, 20);
 		
+		c.paint(g);
+		
 		
 		g.fillRect(p_x, p_y, 100, 100);   // GUN
 	}
@@ -84,10 +99,8 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		 
 		 if(myKey == arg0.VK_ENTER) {
 			 
-			 b_x = p_x;
-			 b_y = p_y;
-			 //repaint();
-		 }
+			 c.addBullet(new Bullet(p_x , p_y ));
+			 }
 		 if(myKey == arg0.VK_LEFT) {
 			 if(p_x <= 50) {
 				 p_x = 50;
@@ -145,7 +158,7 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		
 		Random();
 		b_y -= 40 ;
-		
+		tick();
 		repaint();
 	}
 	
