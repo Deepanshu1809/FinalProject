@@ -19,9 +19,15 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 	Timer t , g , l;
 	Random r = new Random();
 	
+	
+	
+	Boolean delete;
+	
+	
 	ArrayList<Rectangle> goblins;
 	
-	BufferedImage i1  , g1 , gun;
+	BufferedImage i1  , g1 , gun , go;
+	Rectangle player;
 	
 	private Controller c;
 	
@@ -31,7 +37,7 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 	int p_x = 500 , p_y =850;
 	//int b_x , b_y;
 	int delay = 1 ;
-	int del = 300;
+	int del =1000;
 	
 	
 	
@@ -54,7 +60,11 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 
 		
 	}
-	
+	public void check() {
+		a=p_x;
+		b=p_y;
+	}
+	static int a,b;
 	public void tick() {
 		c.tick();
 		
@@ -83,11 +93,13 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		
 		
 		goblins.add(new Rectangle(x1,-10,50,50));
-		goblins.add(new Rectangle(x2,-10,50,50));
-		goblins.add(new Rectangle(x3,-10,50,50));
+		//goblins.add(new Rectangle(x2,-10,50,50));
+		//goblins.add(new Rectangle(x3,-10,50,50));
 		/*goblins.add(new Rectangle(x4,-10,50,50));
 		goblins.add(new Rectangle(x5,-10,50,50));
 		goblins.add(new Rectangle(x6,-10,50,50));*/
+		
+		player = new Rectangle(p_x,p_y,100,100);
 	
 		
 	}
@@ -99,18 +111,12 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 			i1 = ImageIO.read(Bullet.class.getResource("/imgs/bg.png"));
 			g1 = ImageIO.read(Bullet.class.getResource("/imgs/g1.png"));
 			gun = ImageIO.read(Bullet.class.getResource("/imgs/gun.png"));
+			go = ImageIO.read(Bullet.class.getResource("/imgs/GameOver.jpg"));
 		}catch(Exception e) {
 			e.getMessage();
 		}
 		g.drawImage(i1,0,0,1000,1000,null);
 		
-		/*g.fillOval(x1, y1, 20, 20);
-		g.fillOval(x2, y2, 30, 30);
-		g.fillOval(x3, y3, 40, 40);
-		g.fillOval(x4, y4, 50, 50);			// GoBlins
-		g.fillOval(x5, y5, 60, 60);
-		g.fillOval(x6, y6, 70, 70);
-		*/
 		
 		
 		for(Rectangle r:goblins) {
@@ -124,8 +130,15 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		
 		c.paint(g);
 		
-		
+		if(delete == false) {
 		g.drawImage(gun,p_x, p_y, 100, 100,null);   // GUN
+		}
+		
+		if(delete == true) {
+			g.drawImage(go,a,b,100,100,null);
+			
+			
+		}
 	}
 	@Override
 	public void keyPressed(KeyEvent arg0) {
@@ -134,7 +147,7 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 		 
 		 if(myKey == arg0.VK_ENTER) {
 			 
-			 c.addBullet(new Bullet(p_x+50 , p_y ));
+			 c.addBullet(new Bullet(p_x+50 , p_y ),new Rectangle(p_x+50,p_y,20,30));
 			 }
 		 if(myKey == arg0.VK_LEFT) {
 			 if(p_x <= 50) {
@@ -179,40 +192,92 @@ public class GamePlay extends JPanel implements KeyListener , ActionListener {
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
+		
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
+	
+	
+	 
+}
+
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		
 		if(arg0.getSource() == g) {
-			Random();
-			repaint();
+			Random();									//RANDOMLY GENERATING
+			repaint();									//GOBLINS	
 				
 		}
 		
+		
+		 delete = false;
+		
+		
+		Rectangle myithgoblin , bullet , gbln;
+		
+		ArrayList<Rectangle> bul=new ArrayList<>();
+		ArrayList<Bullet> bl=new ArrayList<>();
+		bul=c.getList();
+		bl = c.getLst();
+		Bullet m;
+		
 		if(arg0.getSource() == l) {
-			Rectangle myithgoblin , bullet;
 			
-			for(int i=0;i<goblins.size();i++) {
-				myithgoblin=goblins.get(i);
-				myithgoblin.y+=20;
-				//if(myithgoblin.intersects(bullet)) {
-					
-				//}
+			for(int i=0;i<goblins.size();i++) {				//MOTION OF
+				myithgoblin=goblins.get(i);				 	//GOBLINS		
+				myithgoblin.y+=50;
 			}
+			
+			
+				
+			
 			repaint();
 			
 		}
 		
-		//b_y -= 100 ;
-		tick();
+		
+		tick();												// MOTION OF BULLETS
+		
+		
+		
+		
+		for(int i=0;i<goblins.size();i++) {
+			myithgoblin=goblins.get(i);						// COLLISION
+		for(int j=0;j<bul.size();j++) {						//BETWEEN
+			bullet=bul.get(j);								//BULLET
+			m=bl.get(j);									//AND
+			if(myithgoblin.intersects(bullet))				//GOBLINS
+			{
+			goblins.remove(myithgoblin);
+			c.removeBullet(m,bullet);
+			}
+		}
+		}
+		
+		
+		
+		for(int k=0;k<goblins.size();k++) {
+			
+			gbln =goblins.get(k);
+			
+			if(gbln.intersects(player) || gbln.y >= p_y) {
+				delete =true;
+				check();
+				t.stop();
+				g.stop();
+				l.stop();
+				repaint();
+			}
+			
+		}
+		
+	
 		repaint();
 	}
 	

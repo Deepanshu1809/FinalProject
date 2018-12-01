@@ -1,14 +1,17 @@
 package finalProject;
 
 import java.awt.Graphics;
-import java.util.LinkedList;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Controller {
 
-	private LinkedList<Bullet> b = new LinkedList<Bullet>();
+	private ArrayList<Bullet> b = new ArrayList<Bullet>();
+	private ArrayList<Rectangle> rb = new ArrayList<Rectangle>();
+
+	Bullet TempBullet  ;
+	Rectangle tb;
 	
-	
-	Bullet TempBullet;
 	GamePlay game;
 	
 	
@@ -22,6 +25,15 @@ public class Controller {
 			TempBullet = b.get(i);
 			
 			TempBullet.tick();
+			
+			
+			
+		}
+		
+		for(int j = 0 ; j<rb.size(); j++) {
+			tb =rb.get(j);
+			
+			tb.y -= 30;
 			
 			
 			
@@ -42,18 +54,32 @@ public class Controller {
 			
 		}
 		
+		
+		for(Rectangle w : rb) {
+			
+			g.drawRect(w.x,w.y,w.width,w.height);
+		}
+		
 	}
 	
+	public ArrayList<Rectangle> getList(){
+		return rb;
+	}
+	public ArrayList<Bullet> getLst(){
+		return b;
+	}
 	
-	public void addBullet(Bullet block) {
+	public void addBullet(Bullet block,Rectangle rc) {
 		
 		b.add(block);
+		rb.add(rc);
 	}
 	
 	
-	public void removeBullet(Bullet block) {
+	public void removeBullet(Bullet block , Rectangle rc) {
 		
 		
 		b.remove(block);
+		rb.remove(rc);
 	}
 }

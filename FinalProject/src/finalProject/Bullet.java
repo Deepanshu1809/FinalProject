@@ -12,10 +12,15 @@ public class Bullet {
 	BufferedImage i1 ;
 	
 	
+	
+	
 	public Bullet(int x , int y ) {
 		
 		this.x = x;
 		this.y = y;
+		
+		
+		
 		 
 	
 	}
